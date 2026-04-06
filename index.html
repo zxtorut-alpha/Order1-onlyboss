@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1Nonly | Sensi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-red: #ff1e27;
+            --bg-deep: #080808;
+            --card-bg: #141414;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --brd: rgba(255, 255, 255, 0.08);
+            --smooth-curve: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        html { scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body {
+            background-color: var(--bg-deep); color: var(--text-main);
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px; display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh;
+        }
+
+        .nav-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.4s var(--smooth-curve);
+        }
+        .nav-overlay.active { opacity: 1; pointer-events: all; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; 
+            background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(15px); border: 1px solid var(--brd);
+            position: fixed; top: 15px; left: 4%; right: 4%; z-index: 1000; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-box {
+            width: 36px; height: 36px; border-radius: 50%; overflow: hidden; 
+            border: 2px solid var(--primary-red); box-shadow: 0 0 10px rgba(255, 30, 39, 0.3);
+        }
+        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .brand-text { font-family: 'Oswald', sans-serif; font-size: 1.2rem; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .brand-text span { color: var(--primary-red); }
+
+        .nav-links { display: flex; list-style: none; gap: 20px; padding-right: 10px; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .nav-links a i { color: var(--primary-red); font-size: 1rem; }
+        .nav-links a:hover { color: #fff; }
+        .menu-toggle { display: none; font-size: 1.5rem; color: #fff; cursor: pointer; padding-right: 5px; }
+
+        main { flex: 1 0 auto; display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 110px; min-height: 450px; padding-bottom: 50px; }
+
+        .hero { text-align: center; width: 100%; padding: 0 20px; margin-bottom: 40px; }
+        .hero h1 { font-family: 'Oswald', sans-serif; font-size: 2.5rem; text-transform: uppercase; margin-bottom: 10px; }
+        .hero p { color: var(--text-muted); font-size: 0.95rem; max-width: 90%; margin: 0 auto; }
+
+        .search-area { width: 100%; max-width: 500px; padding: 0 20px; position: relative; }
+        .search-box { width: 100%; background: var(--card-bg); border: 1.5px solid #333; padding: 20px 120px 20px 25px; border-radius: 50px; color: #fff; font-size: 16px; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .search-box:focus { border-color: var(--primary-red); background: #111; }
+        .search-btn { position: absolute; right: 28px; top: 8px; bottom: 8px; background: var(--primary-red); color: #fff; border: none; padding: 0 25px; border-radius: 40px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .search-btn:active { transform: scale(0.95); }
+
+        #resultsWrapper { width: 100%; max-width: 500px; padding: 0 20px 50px; display: none; margin-top: 30px; }
+        .sensi-card { background: var(--card-bg); border-radius: 24px; padding: 30px; border: 1px solid var(--brd); }
+        .sensi-card h2 { text-align: center; font-family: 'Oswald'; font-size: 1.8rem; color: var(--primary-red); margin-bottom: 25px; text-transform: uppercase; }
+
+        .stat-row { margin-bottom: 20px; }
+        .stat-info { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+        .stat-info span i { color: var(--text-main); margin-right: 8px; width: 15px; }
+        .bar-bg { height: 8px; background: #222; border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; width: 0%; background: var(--primary-red); transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        .extra-settings { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border-radius: 15px; padding: 15px; margin-bottom: 20px; border: 1px solid var(--brd); }
+        .extra-box { text-align: center; width: 48%; }
+        .extra-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .dpi-val { font-family: 'Oswald'; font-size: 1.5rem; color: #fff; }
+        .mx-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; }
+        .mx-on { background: rgba(0, 255, 100, 0.1); color: #00ff64; border: 1px solid #00ff64; box-shadow: 0 0 10px rgba(0, 255, 100, 0.2); }
+        .mx-off { background: rgba(255, 50, 50, 0.1); color: #ff3232; border: 1px solid #ff3232; }
+
+        footer { flex-shrink: 0; width: 100%; padding: 40px 20px 30px; text-align: center; border-top: 1px solid var(--brd); background: #050505; }
+        .social-icons { display: flex; justify-content: center; gap: 25px; margin-bottom: 20px; }
+        .social-icons a { color: var(--text-muted); font-size: 1.4rem; transition: 0.3s; background: #111; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #222; text-decoration: none; }
+        .social-icons a:active { color: var(--primary-red); border-color: var(--primary-red); }
+        .footer-text { font-size: 0.8rem; color: #666; line-height: 1.8; }
+        .footer-text b { color: #ccc; }
+
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--primary-red); color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 700; display: none; z-index: 3000; text-transform: uppercase; }
+
+        /* --- iOS Style Apple Pay / Unlock Modal --- */
+        .ios-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            z-index: 2000; opacity: 0; visibility: hidden; transition: 0.4s var(--smooth-curve);
+            display: flex; align-items: flex-end; justify-content: center;
+        }
+        .ios-modal-overlay.show { opacity: 1; visibility: visible; }
+        
+        .ios-modal-sheet {
+            background: #1c1c1e; width: 100%; max-width: 500px;
+            padding: 20px 25px 40px; border-radius: 30px 30px 0 0;
+            transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+            text-align: center; border-top: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        }
+        .ios-modal-overlay.show .ios-modal-sheet { transform: translateY(0); }
+        
+        .ios-handle { width: 40px; height: 5px; background: #555; border-radius: 5px; margin: 0 auto 25px; }
+        
+        .ios-modal-icon { font-size: 3.5rem; background: -webkit-linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; }
+        .ios-modal-sheet h3 { font-family: 'Inter', sans-serif; font-size: 1.4rem; color: #fff; margin-bottom: 8px; }
+        .ios-modal-sheet p { color: #888; font-size: 0.9rem; margin-bottom: 30px; line-height: 1.5; }
+        
+        .ios-btn-pay {
+            background: #fff; color: #000; width: 100%; padding: 18px;
+            border-radius: 20px; font-weight: 800; border: none; font-size: 1.1rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.2s;
+        }
+        .ios-btn-pay:active { transform: scale(0.96); background: #eee; }
+        
+        .ios-btn-cancel {
+            background: transparent; color: #0a84ff; width: 100%; padding: 15px;
+            border: none; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: flex; position: absolute; top: calc(100% + 15px); left: 0; width: 100%; background: rgba(15, 15, 15, 0.98); flex-direction: column; border-radius: 20px; border: 1px solid var(--brd); box-shadow: 0 10px 30px rgba(0,0,0,0.8); padding: 10px 0; opacity: 0; visibility: hidden; transform: translateY(-15px) scale(0.98); transition: all 0.4s var(--smooth-curve); transform-origin: top center; }
+            .nav-links.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+            .nav-links li { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+            .nav-links li:last-child { border-bottom: none; }
+            .menu-toggle { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ios-modal-overlay" id="iosModal">
+        <div class="ios-modal-sheet">
+            <div class="ios-handle"></div>
+            <i class="fa-brands fa-instagram ios-modal-icon"></i>
+            <h3>Verification Required</h3>
+            <p>Follow <b>1nonlyboss.official</b> on Instagram to securely unlock and view this device's premium sensitivity.</p>
+            <button class="ios-btn-pay" id="unlockBtn"><i class="fa-brands fa-instagram" style="color:#000;"></i> Follow to Unlock</button>
+            <button class="ios-btn-cancel" id="cancelModalBtn">Cancel</button>
+        </div>
+    </div>
+
+    <div class="nav-overlay" id="navOverlay"></div>
+    <div id="toast">Error Message</div>
+
+    <header>
+        <a href="#" class="brand">
+            <div class="logo-box"><img src="logo.jpg" alt="1N"></div>
+            <div class="brand-text">1Nonly<span>.SENSI</span></div>
+        </a>
+        <nav>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="#footer-section"><i class="fa-solid fa-share-nodes"></i> Socials</a></li>
+                <li><a href="#footer-section"><i class="fa-solid fa-headset"></i> Support</a></li>
+            </ul>
+            <div class="menu-toggle" id="menuBtn"><i class="fa-solid fa-bars"></i></div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Accuracy Sensi</h1>
+            <p>Optimized hardware settings for Free Fire Max Pro Gamers.</p>
+        </section>
+
+        <div class="search-area">
+            <input type="text" id="deviceInput" class="search-box" placeholder="Enter Device Name...">
+            <button class="search-btn" id="searchBtn">SCAN</button>
+        </div>
+
+        <div id="resultsWrapper"></div>
+    </main>
+
+    <footer id="footer-section">
+        <div class="social-icons">
+            <a href="https://www.instagram.com/1nonlyboss.official?igsh=MWR4cnZsZDF0cnozOQ==" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#"><i class="fa-brands fa-telegram"></i></a>
+        </div>
+        <p class="footer-text">
+            Love from <b>1NonlyBoss</b>.<br>
+            All rights reserved by <b>ZxTORUT</b>
+        </p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUyUhse0_qoIW9vn0HNClUW92PNmCpjoc",
+            authDomain: "nonly-cb160.firebaseapp.com",
+            projectId: "nonly-cb160",
+            storageBucket: "nonly-cb160.firebasestorage.app",
+            messagingSenderId: "49260369408",
+            appId: "1:49260369408:web:8546954b43d72dcf742ae5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const menuBtn = document.getElementById('menuBtn');
+        const navLinks = document.getElementById('navLinks');
+        const allLinks = document.querySelectorAll('.nav-links a');
+        const navOverlay = document.getElementById('navOverlay');
+
+        function toggleMenu() { navLinks.classList.toggle('active'); navOverlay.classList.toggle('active'); }
+        function closeNav() { navLinks.classList.remove('active'); navOverlay.classList.remove('active'); }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        navOverlay.addEventListener('click', closeNav);
+        allLinks.forEach(link => { link.addEventListener('click', closeNav); });
+
+        // --- LOCKER LOGIC ---
+        let pendingData = null; 
+        const iosModal = document.getElementById('iosModal');
+
+        // FIXED: Using Event Listener instead of inline onclick
+        document.getElementById('cancelModalBtn').addEventListener('click', () => {
+            iosModal.classList.remove('show');
+        });
+
+        const searchBtn = document.getElementById('searchBtn');
+        const deviceInput = document.getElementById('deviceInput');
+
+        searchBtn.addEventListener('click', async () => {
+            const input = deviceInput.value.trim().toLowerCase();
+            const wrapper = document.getElementById('resultsWrapper');
+
+            // IMPORTANT FIX: Drop Mobile Keyboard immediately!
+            deviceInput.blur();
+
+            if (!input) { showToast("Enter a device name!"); return; }
+            wrapper.style.display = 'none';
+
+            try {
+                const snap = await getDocs(collection(db, "sensitivities"));
+                let found = null;
+                snap.forEach(doc => {
+                    if (doc.data().deviceName.toLowerCase().includes(input)) found = doc.data();
+                });
+
+                if (found) {
+                    pendingData = found; 
+                    iosModal.classList.add('show'); // Popup trigger hoga yahan
+                } else { showToast("Device not found!"); }
+            } catch (e) { 
+                console.error("Firebase Error: ", e);
+                showToast("Database Error! Check Console"); 
+            }
+        });
+
+        // FIXED: Added real Instagram link
+        document.getElementById('unlockBtn').addEventListener('click', () => {
+            window.open('https://www.instagram.com/1nonlyboss.official?igsh=MWR4cnZsZDF0cnozOQ==', '_blank'); 
+            
+            iosModal.classList.remove('show'); 
+            
+            showToast("Verifying follow...");
+            setTimeout(() => {
+                showToast("Access Granted!");
+                displaySensi(pendingData);
+                setTimeout(() => { document.getElementById('resultsWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
+            }, 1800);
+        });
+
+        function displaySensi(data) {
+            const wrapper = document.getElementById('resultsWrapper');
+            const dpiValue = data.dpi || "N/A";
+            const mxStatus = data.forceMx === "ON" ? "ON" : "OFF";
+            const mxClass = data.forceMx === "ON" ? "mx-on" : "mx-off";
+
+            wrapper.innerHTML = `
+                <div class="sensi-card">
+                    <h2>${data.deviceName}</h2>
+                    
+                    <div class="extra-settings">
+                        <div class="extra-box">
+                            <div class="extra-label">DPI SETTING</div>
+                            <div class="dpi-val">${dpiValue}</div>
+                        </div>
+                        <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.1);"></div>
+                        <div class="extra-box">
+                            <div class="extra-label">FORCE MX</div>
+                            <div class="mx-badge ${mxClass}">${mxStatus}</div>
+                        </div>
+                    </div>
+
+                    ${renderRow("fa-expand", "General", data.general)}
+                    ${renderRow("fa-crosshairs", "Red Dot", data.redDot)}
+                    ${renderRow("fa-circle-dot", "2x Scope", data.scope2x)}
+                    ${renderRow("fa-bullseye", "4x Scope", data.scope4x)}
+                    ${renderRow("fa-gun", "Sniper", data.sniper)}
+                    ${renderRow("fa-eye", "Free Look", data.freeLook)}
+                </div>`;
+            
+            wrapper.style.display = 'block';
+            setTimeout(() => {
+                document.querySelectorAll('.bar-fill').forEach(bar => bar.style.width = bar.dataset.val + '%');
+            }, 100);
+        }
+
+        function renderRow(icon, label, val) {
+            return `<div class="stat-row">
+                <div class="stat-info"><span><i class="fa-solid ${icon}"></i>${label}</span><span style="color:#fff">${val}</span></div>
+                <div class="bar-bg"><div class="bar-fill" data-val="${val}"></div></div>
+            </div>`;
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg; toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
+    </script>
+</body>
+</html>
