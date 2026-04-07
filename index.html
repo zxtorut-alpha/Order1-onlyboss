@@ -11,6 +11,7 @@
     <style>
         :root {
             --primary-red: #ff1e27;
+            --blue-glow: #0088ff;
             --bg-deep: #080808;
             --card-bg: #141414;
             --text-main: #ffffff;
@@ -42,6 +43,7 @@
         }
 
         .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        
         .logo-box {
             width: 36px; height: 36px; border-radius: 50%; overflow: hidden; 
             border: 2px solid var(--primary-red); box-shadow: 0 0 10px rgba(255, 30, 39, 0.3);
@@ -79,11 +81,15 @@
         .bar-bg { height: 8px; background: #222; border-radius: 10px; overflow: hidden; }
         .bar-fill { height: 100%; width: 0%; background: var(--primary-red); transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
 
-        .extra-settings { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border-radius: 15px; padding: 15px; margin-bottom: 20px; border: 1px solid var(--brd); }
-        .extra-box { text-align: center; width: 48%; }
-        .extra-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
-        .dpi-val { font-family: 'Oswald'; font-size: 1.5rem; color: #fff; }
-        .mx-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; }
+        .extra-settings { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border-radius: 15px; padding: 15px 10px; margin-bottom: 25px; border: 1px solid var(--brd); }
+        .extra-box { text-align: center; flex: 1; }
+        .extra-label { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .divider { width: 1px; height: 35px; background: rgba(255,255,255,0.1); }
+        
+        .dpi-val { font-family: 'Oswald'; font-size: 1.4rem; color: #fff; }
+        .fire-btn-val { font-family: 'Oswald'; font-size: 1.4rem; color: var(--blue-glow); text-shadow: 0 0 10px rgba(0, 136, 255, 0.4); }
+        
+        .mx-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
         .mx-on { background: rgba(0, 255, 100, 0.1); color: #00ff64; border: 1px solid #00ff64; box-shadow: 0 0 10px rgba(0, 255, 100, 0.2); }
         .mx-off { background: rgba(255, 50, 50, 0.1); color: #ff3232; border: 1px solid #ff3232; }
 
@@ -96,7 +102,6 @@
 
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--primary-red); color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 700; display: none; z-index: 3000; text-transform: uppercase; }
 
-        /* --- iOS Style Apple Pay / Unlock Modal --- */
         .ios-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -149,7 +154,7 @@
             <div class="ios-handle"></div>
             <i class="fa-brands fa-instagram ios-modal-icon"></i>
             <h3>Verification Required</h3>
-            <p>Follow <b>1nonlyboss.official</b> on Instagram to securely unlock and view this device's premium sensitivity.</p>
+            <p>Follow <b>1NonlyBoss</b> on Instagram to securely unlock and view this device's premium sensitivity.</p>
             <button class="ios-btn-pay" id="unlockBtn"><i class="fa-brands fa-instagram" style="color:#000;"></i> Follow to Unlock</button>
             <button class="ios-btn-cancel" id="cancelModalBtn">Cancel</button>
         </div>
@@ -189,7 +194,7 @@
 
     <footer id="footer-section">
         <div class="social-icons">
-            <a href="https://www.instagram.com/1nonlyboss.official?igsh=MWR4cnZsZDF0cnozOQ==" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.instagram.com/1nonlyboss.official" target="_blank"><i class="fa-brands fa-instagram"></i></a>
             <a href="#"><i class="fa-brands fa-youtube"></i></a>
             <a href="#"><i class="fa-brands fa-telegram"></i></a>
         </div>
@@ -227,11 +232,9 @@
         navOverlay.addEventListener('click', closeNav);
         allLinks.forEach(link => { link.addEventListener('click', closeNav); });
 
-        // --- LOCKER LOGIC ---
         let pendingData = null; 
         const iosModal = document.getElementById('iosModal');
 
-        // FIXED: Using Event Listener instead of inline onclick
         document.getElementById('cancelModalBtn').addEventListener('click', () => {
             iosModal.classList.remove('show');
         });
@@ -243,7 +246,6 @@
             const input = deviceInput.value.trim().toLowerCase();
             const wrapper = document.getElementById('resultsWrapper');
 
-            // IMPORTANT FIX: Drop Mobile Keyboard immediately!
             deviceInput.blur();
 
             if (!input) { showToast("Enter a device name!"); return; }
@@ -258,15 +260,11 @@
 
                 if (found) {
                     pendingData = found; 
-                    iosModal.classList.add('show'); // Popup trigger hoga yahan
+                    iosModal.classList.add('show'); 
                 } else { showToast("Device not found!"); }
-            } catch (e) { 
-                console.error("Firebase Error: ", e);
-                showToast("Database Error! Check Console"); 
-            }
+            } catch (e) { showToast("Database Error! Check Console"); }
         });
 
-        // FIXED: Added real Instagram link
         document.getElementById('unlockBtn').addEventListener('click', () => {
             window.open('https://www.instagram.com/1nonlyboss.official?igsh=MWR4cnZsZDF0cnozOQ==', '_blank'); 
             
@@ -285,6 +283,7 @@
             const dpiValue = data.dpi || "N/A";
             const mxStatus = data.forceMx === "ON" ? "ON" : "OFF";
             const mxClass = data.forceMx === "ON" ? "mx-on" : "mx-off";
+            const fireBtnValue = data.fireBtn ? `${data.fireBtn}%` : "N/A";
 
             wrapper.innerHTML = `
                 <div class="sensi-card">
@@ -292,12 +291,17 @@
                     
                     <div class="extra-settings">
                         <div class="extra-box">
-                            <div class="extra-label">DPI SETTING</div>
+                            <div class="extra-label">DPI</div>
                             <div class="dpi-val">${dpiValue}</div>
                         </div>
-                        <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.1);"></div>
+                        <div class="divider"></div>
                         <div class="extra-box">
-                            <div class="extra-label">FORCE MX</div>
+                            <div class="extra-label">FIRE BTN</div>
+                            <div class="fire-btn-val">${fireBtnValue}</div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="extra-box">
+                            <div class="extra-label">MX</div>
                             <div class="mx-badge ${mxClass}">${mxStatus}</div>
                         </div>
                     </div>
@@ -311,8 +315,20 @@
                 </div>`;
             
             wrapper.style.display = 'block';
+            
+            // --- 200 SENSI LIMIT MATH FIX ---
             setTimeout(() => {
-                document.querySelectorAll('.bar-fill').forEach(bar => bar.style.width = bar.dataset.val + '%');
+                document.querySelectorAll('.bar-fill').forEach(bar => {
+                    let rawVal = parseInt(bar.dataset.val) || 0;
+                    
+                    // Cap value at 200 just in case
+                    if(rawVal > 200) rawVal = 200; 
+                    
+                    // Calculate percentage based on 200 max
+                    let fillPercentage = (rawVal / 200) * 100;
+                    
+                    bar.style.width = fillPercentage + '%';
+                });
             }, 100);
         }
 
